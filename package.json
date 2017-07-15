@@ -1,0 +1,37 @@
+{
+  "name": "cyclejs-ramda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:wakamsha/cyclejs-ramda.git",
+  "author": "wakamsha <wakamsha@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@cycle/dom": "^17.6.0",
+    "@cycle/run": "^3.1.0",
+    "@cycle/rxjs-run": "^7.0.0",
+    "ramda": "^0.24.1",
+    "rxjs": "^5.4.2",
+    "xstream": "^10.9.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.12",
+    "concurrently": "^3.5.0",
+    "fuse-box": "^2.2.0",
+    "pug": "^2.0.0-rc.2",
+    "pug-cli": "^1.0.0-alpha6",
+    "stylus": "^0.54.5",
+    "typescript": "2.3.4",
+    "yargs": "^8.0.2"
+  },
+  "scripts": {
+    "reset": "rm -rf public/; mkdir -p public/",
+    "style:build": "stylus src/styles/main.styl -o public/app.css",
+    "style:watch": "stylus src/styles/main.styl -o public/app.css -m -w",
+    "template:build": "pug src/templates/index.pug -o public/",
+    "template:watch": "pug src/templates/index.pug -o public/ -w",
+    "script:watch": "node ./fuse --variant dev",
+    "script:prod":  "node ./fuse --variant prod",
+    "serv": "browser-sync start -c bs-config.js",
+    "start": "yarn run reset; concurrently \"yarn run style:watch\" \"yarn run template:watch\" \"yarn run script:watch\" \"yarn run serv\""
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/types/npm-ramda/d73ca180396e58de8ede2e7a8e8faedb90ea611e/typings.json",
+    "raw": "registry:npm/ramda#0.23.0+20170204172743",
+    "main": "index.d.ts",
+    "version": "0.22.1",
+    "name": "ramda"
+  }
+}
