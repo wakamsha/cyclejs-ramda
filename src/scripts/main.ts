@@ -4,19 +4,23 @@ import {run} from '@cycle/rxjs-run';
 import {DOMSource} from '@cycle/dom/rxjs-typings';
 import {div, input, hr, h1, p, VNode, makeDOMDriver, CycleDOMEvent} from '@cycle/dom';
 import {makeScrollDriver} from './drivers/makeScrollDriver';
+import {baseUrl} from 'variants/variant';
+
 
 type SoAll = {
     DOM: DOMSource;
+    Scroll: Observable<string>;
 }
 
 type SiAll = {
     DOM: Observable<VNode>;
-    Scroll: Observable<string>;
+    Scroll: Observable<number>;
 }
 
 type PageState = {
     name: string;
     offsetTop: number;
+    baseUrl: string;
 }
 
 function main({DOM, Scroll}: SoAll): SiAll {
@@ -26,7 +30,8 @@ function main({DOM, Scroll}: SoAll): SiAll {
 
     const initialPageState: PageState = {
         name: '',
-        offsetTop: 0
+        offsetTop: 0,
+        baseUrl: baseUrl
     };
 
     const pageState$ = Observable.merge(
@@ -43,11 +48,12 @@ function main({DOM, Scroll}: SoAll): SiAll {
                     div('.col-sm-8', [
                         div('.well', [
                             input('.field.form-control', {props: {
-                                placeholder: '君の名は… !?',
+                                placeholder: '君の名は… ',
                                 value: pageState.name
                             }}),
                             hr(),
-                            h1(`お前は… ${pageState.name} ${pageState.name && 'だ！'}`)
+                            h1(`お前は… ${pageState.name} ${pageState.name && 'だ！'}`),
+                            div(pageState.baseUrl)
                         ])
                     ])
                 ]),
