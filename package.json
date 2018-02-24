@@ -20,6 +20,7 @@
     "browser-sync": "^2.18.12",
     "concurrently": "^3.5.0",
     "fuse-box": "^2.2.0",
+    "prettier": "^1.10.2",
     "pug": "^2.0.0-rc.2",
     "pug-cli": "^1.0.0-alpha6",
     "stylus": "^0.54.5",
