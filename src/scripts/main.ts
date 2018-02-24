@@ -21,6 +21,41 @@ type SiAll = {
     Scroll: Observable<number>;
 };
 
+// prettier-ignore
+function render({state, scroll}: {
+    state: MainState;
+    scroll: string;
+}): VNode {
+    return div('.container', [
+        div('.row', [
+            div('.col-sm-8', [
+                div('.well', [
+                    input('.field.form-control', {
+                        props: {
+                            placeholder: '君の名は… ',
+                            value: state.name,
+                        },
+                    }),
+                    hr(),
+                    h1([`お前は… ${state.name} ${state.name && 'だ！'}`]),
+                    div([
+                        'baseUrl: ',
+                        code([state.baseUrl])
+                    ]),
+                ]),
+            ]),
+        ]),
+        input('.scrollable__input.form-control', {
+            props: {
+                type: 'number',
+                value: state.offsetTop,
+            },
+        }),
+        p('.scrollable__counter', [scroll]),
+        div('.scroll-content'),
+    ]);
+}
+
 function main({ DOM, Scroll }: SoAll): SiAll {
     const inputName$: Observable<CycleDOMEvent> = DOM.select('.field').events('input');
     const inputScroll$: Observable<CycleDOMEvent> = DOM.select('.scrollable__input').events('input');
@@ -34,33 +69,7 @@ function main({ DOM, Scroll }: SoAll): SiAll {
         .scan((acc: MainState, action: MainStateAction) => action(acc), initialMainState)
         .startWith(initialMainState);
 
-    const dom$ = Observable.combineLatest(state, Scroll.startWith('0px'), (state, scroll) => {
-        return div('.container', [
-            div('.row', [
-                div('.col-sm-8', [
-                    div('.well', [
-                        input('.field.form-control', {
-                            props: {
-                                placeholder: '君の名は… ',
-                                value: state.name,
-                            },
-                        }),
-                        hr(),
-                        h1([`お前は… ${state.name} ${state.name && 'だ！'}`]),
-                        div(['baseUrl: ', code([state.baseUrl])]),
-                    ]),
-                ]),
-            ]),
-            input('.scrollable__input.form-control', {
-                props: {
-                    type: 'number',
-                    value: state.offsetTop,
-                },
-            }),
-            p('.scrollable__counter', [scroll]),
-            div('.scroll-content'),
-        ]);
-    });
+    const dom$ = Observable.combineLatest(state, Scroll.startWith('0px'), (state, scroll) => render({ state, scroll }));
 
     return <SiAll>{
         DOM: dom$,
