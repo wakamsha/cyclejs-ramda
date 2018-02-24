@@ -9,7 +9,8 @@
     "@cycle/dom": "^17.6.0",
     "@cycle/run": "^3.1.0",
     "@cycle/rxjs-run": "^7.0.0",
-    "ramda": "^0.24.1",
+    "@types/ramda": "^0.25.6",
+    "ramda": "^0.25.0",
     "rxjs": "^5.4.2",
     "xstream": "^10.9.0"
   },

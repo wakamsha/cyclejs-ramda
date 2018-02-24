@@ -1,11 +1,12 @@
 import {Observable} from 'rxjs';
-import {assoc} from 'ramda';
 import {run} from '@cycle/rxjs-run';
 import {DOMSource} from '@cycle/dom/rxjs-typings';
-import {div, input, hr, h1, p, VNode, makeDOMDriver, CycleDOMEvent} from '@cycle/dom';
+import {div, input, hr, h1, p, VNode, makeDOMDriver, CycleDOMEvent, code} from '@cycle/dom';
 import {makeScrollDriver} from './drivers/makeScrollDriver';
-import {baseUrl} from 'variants/variant';
-
+import {
+    initialMainState, MainState, MainStateAction, makeUpdateNameAction,
+    makeUpdateOffsetTopAction
+} from './MainState';
 
 type SoAll = {
     DOM: DOMSource;
@@ -17,53 +18,44 @@ type SiAll = {
     Scroll: Observable<number>;
 }
 
-type PageState = {
-    name: string;
-    offsetTop: number;
-    baseUrl: string;
-}
-
 function main({DOM, Scroll}: SoAll): SiAll {
 
     const inputName$: Observable<CycleDOMEvent> = DOM.select('.field').events('input');
     const inputScroll$: Observable<CycleDOMEvent> = DOM.select('.scrollable__input').events('input');
 
-    const initialPageState: PageState = {
-        name: '',
-        offsetTop: 0,
-        baseUrl: baseUrl
-    };
-
-    const pageState$ = Observable.merge(
-        inputName$.map((ev: CycleDOMEvent) => assoc('name', (ev.ownerTarget as HTMLInputElement).value)),
-        inputScroll$.map((ev: CycleDOMEvent) => assoc('scroll', Number((ev.ownerTarget as HTMLInputElement).value)))
-    ).scan((acc, action) => action(acc), initialPageState).startWith(initialPageState);
+    const state: Observable<MainState> = Observable.merge(
+        inputName$.map((ev: CycleDOMEvent) => makeUpdateNameAction((ev.ownerTarget as HTMLInputElement).value)),
+        inputScroll$.map((ev: CycleDOMEvent) => makeUpdateOffsetTopAction(Number((ev.ownerTarget as HTMLInputElement).value)))
+    ).scan((acc: MainState, action: MainStateAction) => action(acc), initialMainState).startWith(initialMainState);
 
     const dom$ = Observable.combineLatest(
-        pageState$,
+        state,
         Scroll.startWith('0px'),
-        (pageState, scroll) => {
+        (state, scroll) => {
             return div('.container', [
                 div('.row', [
                     div('.col-sm-8', [
                         div('.well', [
                             input('.field.form-control', {props: {
                                 placeholder: '君の名は… ',
-                                value: pageState.name
+                                value: state.name
                             }}),
                             hr(),
-                            h1(`お前は… ${pageState.name} ${pageState.name && 'だ！'}`),
-                            div(pageState.baseUrl)
+                            h1([`お前は… ${state.name} ${state.name && 'だ！'}`]),
+                            div([
+                                'baseUrl: ',
+                                code([state.baseUrl])
+                            ])
                         ])
                     ])
                 ]),
                 input('.scrollable__input.form-control', {
                     props: {
                         type: 'number',
-                        value: pageState.offsetTop
+                        value: state.offsetTop
                     }
                 }),
-                p('.scrollable__counter', scroll),
+                p('.scrollable__counter', [scroll]),
                 div('.scroll-content')
             ]);
         }
