@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, merge } from './rxjs-import';
 import { run } from '@cycle/rxjs-run';
 import { DOMSource } from '@cycle/dom/rxjs-typings';
 import { div, input, hr, h1, p, VNode, makeDOMDriver, CycleDOMEvent, code } from '@cycle/dom';
@@ -57,10 +57,10 @@ function render({state, scroll}: {
 }
 
 function main({ DOM, Scroll }: SoAll): SiAll {
-    const inputName$: Observable<CycleDOMEvent> = DOM.select('.field').events('input');
-    const inputScroll$: Observable<CycleDOMEvent> = DOM.select('.scrollable__input').events('input');
+    const inputName$ = DOM.select('.field').events('input');
+    const inputScroll$ = DOM.select('.scrollable__input').events('input');
 
-    const state: Observable<MainState> = Observable.merge(
+    const state: Observable<MainState> = merge(
         inputName$.map((ev: CycleDOMEvent) => makeUpdateNameAction((ev.ownerTarget as HTMLInputElement).value)),
         inputScroll$.map((ev: CycleDOMEvent) =>
             makeUpdateOffsetTopAction(Number((ev.ownerTarget as HTMLInputElement).value)),
@@ -69,9 +69,9 @@ function main({ DOM, Scroll }: SoAll): SiAll {
         .scan((acc: MainState, action: MainStateAction) => action(acc), initialMainState)
         .startWith(initialMainState);
 
-    const dom$ = Observable.combineLatest(state, Scroll.startWith('0px'), (state, scroll) => render({ state, scroll }));
+    const dom$ = combineLatest(state, Scroll.startWith('0px'), (state, scroll) => render({ state, scroll }));
 
-    return <SiAll>{
+    return {
         DOM: dom$,
         Scroll: inputScroll$.map((ev: CycleDOMEvent) => Number((ev.ownerTarget as HTMLInputElement).value)),
     };

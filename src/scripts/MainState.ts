@@ -1,5 +1,5 @@
-import {assoc} from 'ramda';
-import {baseUrl} from 'variants/variant';
+import { assoc } from 'ramda';
+import { baseUrl } from 'variantPath/variant';
 
 export type MainState = {
     name: string;
@@ -7,12 +7,12 @@ export type MainState = {
     baseUrl: string;
 };
 
-export type MainStateAction = (state: MainState) => MainStateAction;
+export type MainStateAction = (state: MainState) => MainState;
 
 export const initialMainState: MainState = {
     name: '',
     offsetTop: 0,
-    baseUrl: baseUrl
+    baseUrl: baseUrl,
 };
 
 export function makeUpdateNameAction(name: string): MainStateAction {
@@ -20,5 +20,5 @@ export function makeUpdateNameAction(name: string): MainStateAction {
 }
 
 export function makeUpdateOffsetTopAction(val: number): MainStateAction {
-    return assoc('scroll', val);
+    return assoc('offset', val);
 }
