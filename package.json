@@ -43,6 +43,6 @@
     "script:format": "prettier --config .prettierrc --write 'src/**/*.ts'",
     "serv": "browser-sync start -c \"bs-config.js\"",
     "start": "yarn run reset && concurrently \"yarn run style:watch\" \"yarn run template:watch\" \"yarn run script:watch\" \"yarn run serv\"",
-    "build": "yarn run reset && yarn run style:build && yarn run template:build && yarn run script:prod"
+    "build": "yarn run reset && yarn run style:build && yarn run template:build && yarn run script:build"
   }
 }

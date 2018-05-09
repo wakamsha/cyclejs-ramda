@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
@@ -10,15 +9,16 @@ const config = {
         variantPath: 'src/scripts/variants/production'
     }
 }[process.env.NODE_ENV];
+const isProd = process.env.NODE_ENV === 'prod';
 
 module.exports = {
-    mode: 'development',
+    mode: isProd ? 'production' : 'development',
     entry: ['./src/scripts/main.ts'],
     output: {
         path: path.resolve(__dirname, 'public/'),
         filename: 'app.js',
     },
-    cache: false,
+    cache: !isProd,
     resolve: {
         extensions: ['.ts', '.js'],
         modules: ['node_modules'],
